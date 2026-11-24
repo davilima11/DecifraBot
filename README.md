@@ -14,7 +14,7 @@ Projeto final da Unidade IV (Agentes e Ética) da disciplina Tendências em Ciê
 
 **Versão online:** https://davilima11.github.io/DecifraBot/ (dá para usar e ler a documentação direto no navegador, sem instalar nada)
 
-![Tela do DecifraBot](documentacao/imagens/)
+![Tela do DecifraBot](documentacao/imagens/tela.png)
 
 ## O que ele faz
 
