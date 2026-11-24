@@ -435,7 +435,7 @@
         "oi tudo bem",
         "oi decifrabot"
       ],
-      "resposta": "Oi! Eu sou o DecifraBot. Cole um código em Python ou JavaScript que eu explico o que cada parte faz, em português. Também posso explicar conceitos, é só perguntar algo como \"o que é um for?\"."
+      "resposta": "Oi! Eu sou o DecifraBot. Escolha a linguagem (Python ou JavaScript), cole um código e eu explico o que cada parte faz, em português. Também posso explicar conceitos, é só perguntar algo como \"o que é um for?\"."
     },
     "ajuda": {
       "exemplos": [
@@ -447,7 +447,7 @@
         "quais linguagens você entende",
         "me ajuda"
       ],
-      "resposta": "Funciona assim:\n1. Cole um código em Python ou JavaScript e eu explico linha por linha.\n2. Depois você pode pedir \"explica a linha 4\", \"resume\" ou perguntar sobre um conceito, como \"o que é uma lista?\".\n3. Se o código fizer algo que merece cuidado, como apagar arquivos ou expor uma senha, eu aviso.\n\nEu não escrevo nem corrijo código: meu papel é te ajudar a entender."
+      "resposta": "Funciona assim:\n1. Escolha a linguagem do código (Python ou JavaScript) e cole o código. Eu explico linha por linha.\n2. Depois você pode pedir \"explica a linha 4\", \"resume\" ou perguntar sobre um conceito, como \"o que é uma lista?\".\n3. Se o código fizer algo que merece cuidado, como apagar arquivos ou expor uma senha, eu aviso.\n\nEu não escrevo nem corrijo código: meu papel é te ajudar a entender."
     },
     "agradecimento": {
       "exemplos": [
@@ -500,17 +500,17 @@
     }
   },
   "mensagens": {
-    "inicial": "Oi! Eu sou o DecifraBot. Cole um código em Python ou JavaScript e eu explico o que cada parte faz, em português. Também dá para perguntar sobre um conceito, como \"o que é um for?\".",
+    "inicial": "Oi! Eu sou o DecifraBot. Escolha a linguagem (Python ou JavaScript), cole um código e eu explico o que cada parte faz, em português. Também dá para perguntar sobre um conceito, como \"o que é um for?\".",
     "nao_entendi": "Não tenho certeza se entendi. Você pode colar um código em Python ou JavaScript, pedir \"explica a linha 3\" sobre o último código, ou perguntar sobre um conceito, como \"o que é uma função?\".",
     "com_duvida": "Acho que você está perguntando sobre {tema}. Se não for isso, me pergunta de outro jeito.\n\n",
     "sem_codigo": "Ainda não tenho nenhum código para explicar. Cole um código em Python ou JavaScript primeiro.",
     "linguagem_nao_suportada": "Isso parece {linguagem}. Por enquanto eu só explico Python e JavaScript. Outras linguagens estão nos planos.",
-    "nao_reconheci": "Não consegui reconhecer esse código como Python nem como JavaScript. Confere se ele foi copiado inteiro?",
-    "ambigua": "Esse trecho funciona tanto em Python quanto em JavaScript. Expliquei como Python; se for JavaScript, é só dizer \"é javascript\".",
     "dado_sensivel": "Opa, parece que você digitou {tipo}. Eu descartei essa mensagem e não guardei nada. Nunca compartilhe senha, cartão ou documento em chat nenhum.",
     "mascarado": "Antes de explicar, escondi {itens} que estava no código. Nada disso foi guardado.",
     "comprido": "O código tem {total} linhas. Mostrei a explicação das {limite} primeiras; para o resto, cole a parte que falta separado.",
-    "trocar_linguagem": "Certo, vou ler como {linguagem}."
+    "trocar_linguagem": "Certo, agora vou ler o código como {linguagem}.",
+    "linguagem_diferente": "Esse código parece {outra}, mas a linguagem escolhida é {escolhida}. Troque para {outra} no seletor de linguagem (ou escreva \"é {outra_minuscula}\") que eu explico.",
+    "parece_outra": "Esse código também funciona como {outra} e tem mais cara de {outra}. Expliquei como {escolhida}, que é a linguagem escolhida; se ele for {outra}, troque no seletor."
   },
   "sinonimos": {
     "n": "nao",

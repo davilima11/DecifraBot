@@ -23,6 +23,13 @@ def iniciar():
     st.session_state.historico = [{"autor": "assistant", "resposta": {"tipo": "texto", "texto": st.session_state.agente.msgs["inicial"], "avisos": []}}]
 
 
+def trocar_linguagem():
+    """Seletor da lateral: se tinha código esperando a troca, ele é explicado agora."""
+    resposta = st.session_state.agente.escolher_linguagem(st.session_state.seletor)
+    if resposta:
+        st.session_state.historico.append({"autor": "assistant", "resposta": resposta})
+
+
 def enviar(texto):
     resposta = st.session_state.agente.responder(texto)
     if resposta["acao"] == "bloquear_dado":
@@ -62,16 +69,22 @@ def mostrar_resposta(r):
 if "agente" not in st.session_state:
     iniciar()
 
+# o seletor sempre mostra a linguagem guardada no agente (o "é javascript" também troca)
+st.session_state.seletor = st.session_state.agente.memoria.linguagem_escolhida
+
 with st.sidebar:
     st.header("DecifraBot")
     st.write("Explica código em português, linha por linha, para quem está começando ou para quem recebeu "
              "um código pronto e quer entender o que ele faz.")
-    st.write("**Linguagens:** Python e JavaScript.")
+    st.radio("Linguagem do código", ["Python", "JavaScript"], key="seletor", horizontal=True,
+             on_change=trocar_linguagem)
     st.write("**Eu não escrevo nem corrijo código.** Meu papel é te ajudar a entender.")
     st.subheader("Experimente")
-    for titulo, codigo in EXEMPLOS.items():
-        if st.button(titulo, use_container_width=True):
-            enviar(codigo)
+    for exemplo in EXEMPLOS:
+        if st.button(exemplo["titulo"], use_container_width=True):
+            # o exemplo troca a linguagem antes de mandar o código
+            st.session_state.agente.escolher_linguagem(exemplo["linguagem"], explicar_pendente=False)
+            enviar(exemplo["codigo"])
             st.rerun()
     if st.button("o que é uma lista?", use_container_width=True):
         enviar("o que é uma lista?")

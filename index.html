@@ -31,8 +31,15 @@
         <div class="chat">
           <div id="mensagens" role="log" aria-label="Conversa com o DecifraBot"></div>
           <form id="form-chat" autocomplete="off">
+            <fieldset class="seletor" id="seletor" disabled>
+              <legend>Linguagem do código</legend>
+              <div class="opcoes">
+                <label><input type="radio" name="linguagem" value="Python" checked><span>Python</span></label>
+                <label><input type="radio" name="linguagem" value="JavaScript"><span>JavaScript</span></label>
+              </div>
+            </fieldset>
             <label for="campo" class="oculto">Código ou pergunta</label>
-            <textarea id="campo" rows="3" spellcheck="false" placeholder="Cole um código em Python ou JavaScript, ou faça uma pergunta..." disabled></textarea>
+            <textarea id="campo" rows="3" spellcheck="false" placeholder="Cole um código em Python ou faça uma pergunta..." disabled></textarea>
             <div class="enviar">
               <span class="dica">Enter envia · Shift+Enter pula linha</span>
               <button type="submit" disabled>Enviar</button>
@@ -42,7 +49,7 @@
 
         <aside class="lateral" aria-label="Sobre o DecifraBot">
           <h2>Como funciona</h2>
-          <p>Cole um código em <strong>Python</strong> ou <strong>JavaScript</strong> e eu explico cada linha. Depois dá para pedir "explica a linha 4", "resume" ou perguntar "o que é um for?".</p>
+          <p>Escolha a linguagem acima do campo, cole um código em <strong>Python</strong> ou <strong>JavaScript</strong> e eu explico cada linha. Depois dá para pedir "explica a linha 4", "resume" ou perguntar "o que é um for?".</p>
           <p class="aviso">Eu <strong>não escrevo nem corrijo</strong> código. Meu papel é te ajudar a entender.</p>
 
           <h2>Experimente</h2>

@@ -28,6 +28,17 @@ def test_ponte_devolve_json_que_a_pagina_entende():
 
 def test_linha_com_crase_nao_quebra_a_citacao():
     ponte.limpar()
+    ponte.escolher_linguagem("JavaScript")
     ponte.responder("const t = `oi ${nome}`;\nconsole.log(t);")
     resposta = json.loads(ponte.responder("explica a linha 1"))
     assert "`` const t = `oi ${nome}`; ``" in resposta["texto"]
+
+
+def test_seletor_da_pagina():
+    ponte.limpar()
+    assert json.loads(ponte.escolher_linguagem("Python")) is None
+    assert ponte.linguagem_escolhida() == "Python"
+    assert json.loads(ponte.responder("let x = 5;"))["acao"] == "linguagem_diferente"
+    resposta = json.loads(ponte.escolher_linguagem("JavaScript"))
+    assert resposta["tipo"] == "explicacao" and resposta["linguagem_escolhida"] == "JavaScript"
+    assert json.loads(ponte.escolher_linguagem("Python")) is None

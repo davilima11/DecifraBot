@@ -39,10 +39,11 @@ def pontos(texto, linguagem):
     return sum(1 for padrao in SINAIS[linguagem] if re.search(padrao, texto, re.MULTILINE))
 
 
-def detectar(texto, preferida=None):
+def detectar(texto):
     """Retorna (linguagem, motivo, ambigua).
 
-    A linguagem preferida (a pessoa disse "é javascript") só decide quando o código vale nas duas.
+    Quem decide a linguagem é a pessoa, no seletor. Isto aqui serve para reconhecer outras
+    linguagens (Java, C...) e para avisar quando o código parece a linguagem que não foi escolhida.
     """
     py, js = le_python(texto), le_javascript(texto)
     p_py, p_js = pontos(texto, "Python"), pontos(texto, "JavaScript")
@@ -59,8 +60,6 @@ def detectar(texto, preferida=None):
             return "Python", "o código funciona nas duas linguagens, mas tem mais marcas de Python", False
         if p_js > p_py:
             return "JavaScript", "o código funciona nas duas linguagens, mas tem mais marcas de JavaScript", False
-        if preferida in ("Python", "JavaScript"):
-            return preferida, f"o código funciona nas duas linguagens e você tinha me dito que usa {preferida}", False
         return "Python", "o código funciona igual em Python e em JavaScript, então escolhi Python", True
     if p_js > p_py:
         return "JavaScript", "ele tem mais marcas de JavaScript (mas tem algum erro de digitação)", False

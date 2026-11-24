@@ -13,14 +13,14 @@ O teste que compara o TF-IDF com o scikit-learn só roda se o scikit-learn estiv
 
 ## Testes automatizados
 
-São 52 testes, todos passando.
+São 59 testes, todos passando.
 
 | Arquivo | O que confere | Testes |
 |---|---|---|
 | `test_python.py` | Código de iniciante, função com `if`/`elif`/`else`, `range`, `while`, `try`, `with open`, list comprehension, alertas de segurança, SQL parametrizado sem alerta falso, estruturas que ele não sabe, erro de sintaxe | 9 |
 | `test_javascript.py` | O mesmo para JavaScript, mais `for` com contador, `else if`, arrow function, `map`, `filter`, `addEventListener`, e um teste que confere que Python e JavaScript usam exatamente a mesma frase para o laço | 8 |
-| `test_site.py` | A lista de arquivos que o site carrega está atualizada, a ponte devolve JSON que a página entende, e uma linha com crase é citada sem quebrar | 3 |
-| `test_agente.py` | Detecção de 8 linguagens e do código ambíguo, linguagens que ele não explica, senhas e chaves escondidas (e que não chegam na memória), conversa inteira (linha, resumo, conceito, troca de linguagem), recusas, perguntas fora do assunto e TF-IDF igual ao scikit-learn | 32 |
+| `test_site.py` | A lista de arquivos que o site carrega está atualizada, a ponte devolve JSON que a página entende, uma linha com crase é citada sem quebrar e o seletor de linguagem funciona pela ponte | 4 |
+| `test_agente.py` | Reconhecimento de 8 linguagens, linguagens que ele não explica, seletor de linguagem (começa em Python, pede para trocar, explica o código guardado depois da troca, "é javascript" também troca), senhas e chaves escondidas (e que não chegam na memória), conversa inteira (linha, resumo, conceito), recusas, perguntas fora do assunto e TF-IDF igual ao scikit-learn | 38 |
 
 ## Calibração das perguntas
 
@@ -41,7 +41,7 @@ Essa foi a parte mais útil do trabalho. Cada problema abaixo foi achado testand
 | O alerta de "apaga o arquivo" aparecia duas vezes | A linha era verificada no laço e de novo dentro dele | Cada linha só verifica o que é dela |
 | A explicação mostrava `'/'`, mas o código tinha `"/"` | O trecho era reescrito pelo Python em vez de copiado | O trecho é copiado do código original |
 | O TF-IDF feito à mão dava números diferentes do scikit-learn | Palavras de uma letra eram contadas duas vezes | Corrigido; um teste compara os dois |
-| Depois de "é javascript", o próximo código Python também era lido como JavaScript | A preferência valia para qualquer código | Ela só decide quando o código vale nas duas linguagens |
+| `x = 5` com Python escolhido recebia o aviso "tem mais cara de Python", que não faz sentido | O aviso olhava só a linguagem mais provável, mesmo quando o código vale igual nas duas | O aviso só aparece quando o código tem mais cara da outra linguagem |
 | 5 perguntas entendidas errado com confiança alta | O TF-IDF dava mais peso às palavras comuns do que ao termo técnico | Regras de termo técnico e de verbo de pedido |
 | `SELECT * FROM alunos` recebia "não entendi" em vez de "isso parece SQL" | A mensagem não era reconhecida como código, então nem chegava na detecção de linguagem | Marcas de outras linguagens também contam como código |
 | A recusa de "faz esse código pra mim" saía **vazia** | O texto da resposta vinha do rótulo do TF-IDF ("resumo"), e não da recusa | A recusa tem resposta própria; um teste pega isso |
@@ -59,7 +59,7 @@ O guia fala em tentar fazer o agente falhar de propósito.
 | Código com `api_key = "sk-proj-..."` | Trocou o valor por `***` antes de analisar e avisou |
 | Código de "limpeza" cujo comentário diz "arquivos temporários", mas que apaga a pasta Documentos | Explicou o que o código faz de verdade e alertou que ele apaga arquivos |
 | SQL montado com f-string ou template string | Alertou sobre SQL Injection |
-| `x = 5` (vale nas duas linguagens) | Explicou como Python e avisou que podia ser JavaScript |
+| Código JavaScript com Python escolhido | Não explicou como Python; pediu para trocar no seletor e explicou depois da troca |
 | Código Java, C, HTML ou SQL | Disse qual linguagem parecia e que ainda não explica essa |
 | Código com erro de digitação | Disse que não conseguiu ler e a linha provável do erro |
 | No site, código com `<img src=x onerror=...>` e `<script>` dentro de strings | Mostrou tudo como texto; nada foi executado (testado num navegador de verdade) |

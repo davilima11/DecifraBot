@@ -85,7 +85,8 @@ As regras que usei para escrever as mensagens:
 3. Na explicação das linhas, recuar o que está dentro de outro bloco, para a pessoa ver o que está dentro do `for` ou do `if`.
 4. Terminar a explicação mostrando os conceitos usados, como convite para a próxima pergunta.
 5. Quando não sabe: *"usa uma função `lambda`, que eu ainda não sei explicar. Prefiro avisar a chutar."*
-6. Quando recusa: *"Isso eu não faço: eu não escrevo nem corrijo código. Meu papel é te ajudar a entender. Se você colar o código que tem, eu explico cada parte..."*
+6. Quando o código é da outra linguagem: *"Esse código parece JavaScript, mas a linguagem escolhida é Python. Troque para JavaScript no seletor de linguagem (ou escreva \"é javascript\") que eu explico."* Ao trocar, ele explica o código que ficou esperando, sem a pessoa ter que colar de novo.
+7. Quando recusa: *"Isso eu não faço: eu não escrevo nem corrijo código. Meu papel é te ajudar a entender. Se você colar o código que tem, eu explico cada parte..."*
 
 ## Referências
 

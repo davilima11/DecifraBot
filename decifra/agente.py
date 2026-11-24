@@ -1,6 +1,6 @@
 """O DecifraBot, organizado nas 4 camadas vistas na Unidade 4:
 
-1. perceber -> camada perceptiva: separa código de pergunta, esconde senhas, descobre a linguagem
+1. perceber -> camada perceptiva: separa código de pergunta, esconde senhas, confere a linguagem
 2. entender -> camada cognitiva: lê o código com o analisador da linguagem, ou entende a pergunta com TF-IDF
 3. decidir  -> camada decisória: aplica as regras (dado sensível, linguagem, limiar, pedido de código)
 4. executar -> camada executiva: monta a resposta
@@ -19,6 +19,8 @@ from decifra.tfidf import TfIdf
 
 BASE_PADRAO = Path(__file__).resolve().parent.parent / "dados" / "conhecimento.json"
 ANALISADORES = {"Python": python.analisar, "JavaScript": javascript.analisar}
+CONSEGUE_LER = {"Python": le_python, "JavaScript": le_javascript}
+OUTRA = {"Python": "JavaScript", "JavaScript": "Python"}
 
 # limiares de confiança para perguntas (escolhidos testando, ver documentacao/4-testes.md)
 LIMIAR_ALTO = 0.55
@@ -91,14 +93,16 @@ class Agente:
     def perceber(self, texto):
         texto = (texto or "").strip("\n")
         percepcao = {"original": texto, "eh_codigo": parece_codigo(texto), "dado_sensivel": None,
-                     "codigo": None, "escondidos": [], "linguagem": None, "motivo": "", "ambigua": False,
-                     "linha": None, "troca_linguagem": None, "normalizado": "", "pede_codigo": False,
-                     "termos": {}}
+                     "codigo": None, "escondidos": [], "linguagem": self.memoria.linguagem_escolhida,
+                     "detectada": None, "motivo": "", "linha": None, "troca_linguagem": None,
+                     "normalizado": "", "pede_codigo": False, "termos": {}}
         if percepcao["eh_codigo"]:
             codigo, escondidos = mascarar_codigo(texto)
             percepcao["codigo"], percepcao["escondidos"] = codigo, escondidos
-            linguagem, motivo, ambigua = detectar(codigo, self.memoria.linguagem_preferida)
-            percepcao.update(linguagem=linguagem, motivo=motivo, ambigua=ambigua)
+            # a pessoa escolhe a linguagem; a detecção só serve para avisar quando o código parece outra
+            detectada, motivo, ambigua = detectar(codigo)
+            # código que vale igual nas duas (como `x = 5`) não tem "cara" de nenhuma
+            percepcao.update(detectada=None if ambigua else detectada, motivo=motivo)
             return percepcao
         percepcao["dado_sensivel"] = dado_sensivel_no_texto(texto)
         pede_linha = PEDE_LINHA.search(texto)
@@ -119,8 +123,10 @@ class Agente:
     # ---------- camada 2: cognitiva ----------
     def entender(self, percepcao):
         if percepcao["eh_codigo"]:
-            analisar = ANALISADORES.get(percepcao["linguagem"])
-            return ("codigo", 1.0, analisar(percepcao["codigo"]) if analisar else None)
+            detectada = percepcao["detectada"]
+            if detectada is not None and detectada not in ANALISADORES:
+                return ("codigo", 1.0, None)  # Java, C, HTML...: não adianta ler
+            return ("codigo", 1.0, ANALISADORES[percepcao["linguagem"]](percepcao["codigo"]))
         if percepcao["dado_sensivel"] or not percepcao["normalizado"]:
             return (None, 0.0, None)
         indice, confianca = self.tfidf.mais_parecida(percepcao["normalizado"])
@@ -138,12 +144,12 @@ class Agente:
         if percepcao["dado_sensivel"]:
             return "bloquear_dado"
         if percepcao["eh_codigo"]:
-            if percepcao["linguagem"] is None:
-                return "nao_reconheci"
-            if percepcao["linguagem"] not in ANALISADORES:
+            if resultado is None:
                 return "linguagem_nao_suportada"
             if resultado.erro:
-                return "erro_de_leitura"
+                # não deu para ler na linguagem escolhida: se a outra consegue, a escolha é que está errada
+                outra = OUTRA[percepcao["linguagem"]]
+                return "linguagem_diferente" if CONSEGUE_LER[outra](percepcao["codigo"]) else "erro_de_leitura"
             return "explicar_codigo"
         if percepcao["troca_linguagem"]:
             return "trocar_linguagem"
@@ -169,13 +175,18 @@ class Agente:
         resposta = {"tipo": "texto", "texto": "", "resultado": None, "avisos": []}
         if acao == "bloquear_dado":
             resposta["texto"] = self.msgs["dado_sensivel"].format(tipo=percepcao["dado_sensivel"])
-        elif acao == "nao_reconheci":
-            resposta["texto"] = self.msgs["nao_reconheci"]
         elif acao == "linguagem_nao_suportada":
-            resposta["texto"] = self.msgs["linguagem_nao_suportada"].format(linguagem=percepcao["linguagem"])
+            resposta["texto"] = self.msgs["linguagem_nao_suportada"].format(linguagem=percepcao["detectada"])
         elif acao == "erro_de_leitura":
             resposta["texto"] = resultado.erro
+        elif acao == "linguagem_diferente":
+            # o código fica esperando: quando a pessoa trocar a linguagem, ele é explicado
+            self.memoria.codigo_pendente = percepcao["codigo"]
+            escolhida, outra = percepcao["linguagem"], OUTRA[percepcao["linguagem"]]
+            resposta["texto"] = self.msgs["linguagem_diferente"].format(
+                escolhida=escolhida, outra=outra, outra_minuscula=outra.lower())
         elif acao == "explicar_codigo":
+            self.memoria.codigo_pendente = None
             self.memoria.guardar_codigo(percepcao["codigo"], percepcao["linguagem"], resultado)
             resposta = self.resposta_de_codigo(resultado, percepcao)
         elif acao == "trocar_linguagem":
@@ -187,7 +198,7 @@ class Agente:
         elif acao == "resumir":
             resposta["texto"] = self.resumo(self.memoria.resultado)
         elif acao == "explicar_de_novo":
-            resposta = self.resposta_de_codigo(self.memoria.resultado, {"escondidos": [], "ambigua": False, "codigo": self.memoria.codigo})
+            resposta = self.resposta_de_codigo(self.memoria.resultado, {"codigo": self.memoria.codigo})
         elif acao in ("explicar_conceito", "explicar_conceito_com_duvida"):
             resposta["texto"] = self.explicar_conceito(rotulo.split(":", 1)[1], acao.endswith("duvida"))
         elif acao == "recusar_codigo":
@@ -202,8 +213,9 @@ class Agente:
         avisos = []
         if percepcao.get("escondidos"):
             avisos.append(self.msgs["mascarado"].format(itens=" e ".join(percepcao["escondidos"])))
-        if percepcao.get("ambigua"):
-            avisos.append(self.msgs["ambigua"])
+        detectada, escolhida = percepcao.get("detectada"), resultado.linguagem
+        if detectada in ANALISADORES and detectada != escolhida:
+            avisos.append(self.msgs["parece_outra"].format(outra=detectada, escolhida=escolhida))
         linhas = resultado.linhas
         total = len((percepcao.get("codigo") or "").splitlines())
         if total > LIMITE_LINHAS:
@@ -212,19 +224,51 @@ class Agente:
         return {"tipo": "explicacao", "texto": resultado.resumo(), "resultado": resultado, "linhas": linhas,
                 "avisos": avisos}
 
-    def trocar_linguagem(self, linguagem):
-        self.memoria.linguagem_preferida = linguagem
-        if not self.memoria.codigo:
-            return {"tipo": "texto", "texto": self.msgs["trocar_linguagem"].format(linguagem=linguagem) +
-                    " Agora é só colar o código.", "resultado": None, "avisos": []}
-        resultado = ANALISADORES[linguagem](self.memoria.codigo)
+    def trocar_linguagem(self, linguagem, reexplicar=True):
+        """Troca a linguagem escolhida e explica o código que estava esperando (ou, se a pessoa
+        escreveu "é javascript", o último código de novo, agora na outra linguagem)."""
+        self.memoria.linguagem_escolhida = linguagem
+        codigo = self.memoria.codigo_pendente or (self.memoria.codigo if reexplicar else None)
+        self.memoria.codigo_pendente = None
+        aviso = self.msgs["trocar_linguagem"].format(linguagem=linguagem)
+        if not codigo:
+            return {"tipo": "texto", "texto": aviso, "resultado": None, "avisos": []}
+        resultado = ANALISADORES[linguagem](codigo)
         if resultado.erro:
-            return {"tipo": "texto", "texto": f"Tentei ler como {linguagem}, mas não deu: {resultado.erro}",
-                    "resultado": None, "avisos": []}
-        self.memoria.guardar_codigo(self.memoria.codigo, linguagem, resultado)
-        resposta = self.resposta_de_codigo(resultado, {"codigo": self.memoria.codigo})
-        resposta["avisos"].insert(0, self.msgs["trocar_linguagem"].format(linguagem=linguagem))
+            return {"tipo": "texto", "texto": aviso + f" O último código que você colou não parece {linguagem}, "
+                    "então não expliquei ele de novo. Pode colar um código novo.", "resultado": None, "avisos": []}
+        self.memoria.guardar_codigo(codigo, linguagem, resultado)
+        resposta = self.resposta_de_codigo(resultado, {"codigo": codigo})
+        resposta["avisos"].insert(0, aviso)
         return resposta
+
+    def escolher_linguagem(self, linguagem, explicar_pendente=True):
+        """Chamado pelo seletor da tela. Só responde se tinha um código esperando a troca.
+
+        Os botões de exemplo usam explicar_pendente=False: eles trocam a linguagem e já mandam
+        o próprio código, então um código que estava esperando é descartado.
+        """
+        if linguagem not in ANALISADORES:
+            raise ValueError(f"linguagem desconhecida: {linguagem}")
+        if not explicar_pendente:
+            self.memoria.codigo_pendente = None
+        if not self.memoria.codigo_pendente:
+            self.memoria.linguagem_escolhida = linguagem
+            return None
+        resposta = self.trocar_linguagem(linguagem, reexplicar=False)
+        resultado = resposta.get("resultado")
+        explicacao = (f"Li como {linguagem} porque você trocou a linguagem no seletor. "
+                      f"{self.contagem(resultado)}" if resultado else "")
+        resposta.update(acao="trocar_linguagem", rotulo=None, confianca=1.0, linguagem=linguagem,
+                        linguagem_escolhida=linguagem, explicacao=explicacao, codigo_exibido=None)
+        self.memoria.registrar("decifrabot", resposta["texto"][:200])
+        return resposta
+
+    def contagem(self, resultado):
+        total = len(resultado.linhas)
+        certas = total - resultado.desconhecidas
+        texto = f"Reconheci {certas} de {total} instruções"
+        return texto + (f"; nas outras {resultado.desconhecidas}, avisei que não sei." if resultado.desconhecidas else ".")
 
     def explicar_linha(self, numero):
         linhas_fonte = self.memoria.codigo.splitlines()
@@ -263,7 +307,7 @@ class Agente:
 
     def explicar_conceito(self, chave, com_duvida):
         conceito = self.conceitos[chave]
-        linguagem = self.memoria.linguagem or "Python"
+        linguagem = self.memoria.linguagem_escolhida
         texto = conceito["explicacao"] + f"\n\nExemplo em {linguagem}:\n```{linguagem.lower()}\n{conceito['exemplos'][linguagem]}\n```"
         if com_duvida:
             texto = self.msgs["com_duvida"].format(tema=conceito["titulo"]) + texto
@@ -272,14 +316,20 @@ class Agente:
     def explicar_decisao(self, acao, percepcao, rotulo, confianca, resultado):
         """Explica em linguagem simples por que o DecifraBot respondeu daquele jeito (interpretabilidade)."""
         conf = f"{confianca:.2f}".replace(".", ",")
-        if acao == "explicar_codigo" or acao == "trocar_linguagem" and resultado:
-            total = len(resultado.linhas)
-            certas = total - resultado.desconhecidas
-            motivo = percepcao.get("motivo") or f"você pediu para ler como {self.memoria.linguagem}"
-            texto = f"Li como {resultado.linguagem} porque {motivo}. Reconheci {certas} de {total} instruções"
-            return texto + (f"; nas outras {resultado.desconhecidas}, avisei que não sei." if resultado.desconhecidas else ".")
-        if acao in ("linguagem_nao_suportada", "nao_reconheci", "erro_de_leitura"):
-            return f"Não expliquei porque {percepcao.get('motivo') or 'não consegui ler o código'}."
+        if acao == "explicar_codigo":
+            return f"Li como {resultado.linguagem} porque é a linguagem escolhida no seletor. {self.contagem(resultado)}"
+        if acao == "trocar_linguagem":
+            if resultado:
+                return f"Li como {resultado.linguagem} porque você pediu para trocar a linguagem. {self.contagem(resultado)}"
+            return "Você pediu para trocar a linguagem."
+        if acao == "linguagem_diferente":
+            escolhida = percepcao["linguagem"]
+            return (f"Tentei ler como {escolhida}, que é a linguagem escolhida, e não consegui. "
+                    f"O leitor de {OUTRA[escolhida]} conseguiu, então o código deve ser {OUTRA[escolhida]}.")
+        if acao == "linguagem_nao_suportada":
+            return f"Não expliquei porque {percepcao['motivo']}."
+        if acao == "erro_de_leitura":
+            return f"Tentei ler como {percepcao['linguagem']}, que é a linguagem escolhida, e o código tem algo que eu não consegui ler."
         if acao == "bloquear_dado":
             return "A mensagem parecia ter um dado sensível, então foi descartada antes de qualquer análise."
         if acao == "nao_entendi":
@@ -305,8 +355,9 @@ class Agente:
         acao = self.decidir(percepcao, rotulo, confianca, resultado)
         resposta = self.executar(acao, percepcao, rotulo, resultado)
         if acao == "trocar_linguagem":
-            resultado = self.memoria.resultado
+            resultado = resposta.get("resultado")
         resposta.update(acao=acao, rotulo=rotulo, confianca=round(confianca, 2), linguagem=percepcao["linguagem"],
+                        linguagem_escolhida=self.memoria.linguagem_escolhida,
                         explicacao=self.explicar_decisao(acao, percepcao, rotulo, confianca, resultado),
                         codigo_exibido=percepcao["codigo"])
         # memória curta: código entra só como aviso, e mensagem com dado sensível não entra

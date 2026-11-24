@@ -6,10 +6,10 @@ O guia da Unidade IV diferencia modelo generativo e agente por quatro pontos: a�
 
 | | Modelo generativo | DecifraBot |
 |---|---|---|
-| Ação | Responde a um prompt isolado | Decide entre explicar, perguntar a linguagem, avisar sobre perigo, recusar ou admitir que não sabe |
+| Ação | Responde a um prompt isolado | Decide entre explicar, pedir para trocar a linguagem, avisar sobre perigo, recusar ou admitir que não sabe |
 | Foco | Gerar texto | Fazer a pessoa entender o código |
 | Contexto | Não lembra da conversa | Lembra do último código, para responder "explica a linha 4" |
-| Autonomia | Nenhuma | Pequena: escolhe a linguagem e esconde senhas sozinho, mas nunca executa nem altera o código |
+| Autonomia | Nenhuma | Pequena: esconde senhas sozinho e percebe quando o código não é da linguagem escolhida, mas nunca executa nem altera o código |
 
 ## As 4 camadas
 
@@ -18,15 +18,15 @@ Cada camada é um método da classe `Agente`, em `decifra/agente.py`.
 ```mermaid
 flowchart TD
     A[Mensagem do usuário] --> P
-    P["1. Perceptiva: perceber()<br/>separa código de pergunta, esconde senhas e descobre a linguagem"] --> C
+    P["1. Perceptiva: perceber()<br/>separa código de pergunta, esconde senhas e vê a linguagem escolhida"] --> C
     C["2. Cognitiva: entender()<br/>lê o código com o analisador da linguagem, ou entende a pergunta com TF-IDF"] --> D
     D["3. Decisória: decidir()<br/>aplica as regras: dado sensível, linguagem, limiar, pedido de código"] --> E
     E["4. Executiva: executar()<br/>monta a explicação, o resumo, o conceito ou a recusa"] --> R[Resposta + explicação da decisão]
 ```
 
-**Perceptiva.** A primeira coisa é decidir se a mensagem é código ou pergunta. Se for código, duas coisas acontecem antes de qualquer análise. Primeiro, senhas, chaves de API e senhas dentro de endereços de conexão são trocadas por `***`. Depois, o bot descobre a linguagem: ele tenta ler o código com o leitor de Python e com o de JavaScript, e conta "marcas" de cada uma (como `def` e `:` no fim da linha para Python, ou `let`, `;` e `{` para JavaScript). Também reconhece Java, C, HTML, SQL e PHP, só para avisar que ainda não explica essas linguagens.
+**Perceptiva.** A primeira coisa é decidir se a mensagem é código ou pergunta. Se for código, duas coisas acontecem antes de qualquer análise. Primeiro, senhas, chaves de API e senhas dentro de endereços de conexão são trocadas por `***`. Depois, a camada pega a linguagem que a pessoa escolheu no seletor (Python ou JavaScript; começa em Python). Não tem modo automático: quem decide a linguagem é a pessoa. Mesmo assim, o bot dá uma olhada no código, tentando ler com os dois leitores e contando "marcas" de cada linguagem (como `def` e `:` no fim da linha para Python, ou `let`, `;` e `{` para JavaScript). Isso serve só para avisar: se o código parece Java, C, HTML, SQL ou PHP, ele diz que ainda não explica essas linguagens.
 
-Se a mensagem for pergunta, a camada procura número de linha ("linha 4"), troca de linguagem ("é javascript"), termos técnicos (`for`, `def`, `const`...) e verbos de pedido ("faz", "corrige", "arruma") acompanhados de "código" ou "pra mim".
+Se a mensagem for pergunta, a camada procura número de linha ("linha 4"), troca de linguagem escrita ("é javascript", que muda o seletor também), termos técnicos (`for`, `def`, `const`...) e verbos de pedido ("faz", "corrige", "arruma") acompanhados de "código" ou "pra mim".
 
 **Cognitiva.** Para código, o analisador da linguagem transforma o texto numa árvore (o Python faz isso com o módulo `ast`, que já vem com ele, e o JavaScript com a biblioteca `esprima`). Depois percorre essa árvore e, para cada estrutura que reconhece, escolhe uma frase de explicação e preenche com os nomes do código da pessoa.
 
@@ -36,13 +36,14 @@ Para pergunta, o texto é comparado com as 160 frases de exemplo da base usando 
 
 1. Tem senha ou cartão numa mensagem que não é código? Descarta.
 2. É código de uma linguagem que eu não sei? Avisa.
-3. O leitor não conseguiu ler? Diz em que linha deve estar o erro.
-4. É código? Explica. Se o código vale igual nas duas linguagens, avisa que escolheu Python.
-5. Pediu uma linha, resumo ou troca de linguagem, mas não tem código guardado? Pede o código.
-6. Tem verbo de pedido junto com "código"? Recusa.
-7. Confiança abaixo de 0,40? Admite que não entendeu.
-8. Entre 0,40 e 0,55? Responde, avisando que pode ter entendido errado.
-9. Acima de 0,55? Responde direto.
+3. O leitor da linguagem escolhida não conseguiu ler, mas o da outra conseguiu? Pede para trocar no seletor e guarda o código. Quando a pessoa troca, ele explica esse código.
+4. Nenhum dos dois leitores conseguiu? Diz em que linha deve estar o erro.
+5. É código? Explica na linguagem escolhida. Se o código também funciona na outra e tem mais cara dela, avisa.
+6. Pediu uma linha, resumo ou troca de linguagem, mas não tem código guardado? Pede o código.
+7. Tem verbo de pedido junto com "código"? Recusa.
+8. Confiança abaixo de 0,40? Admite que não entendeu.
+9. Entre 0,40 e 0,55? Responde, avisando que pode ter entendido errado.
+10. Acima de 0,55? Responde direto.
 
 **Executiva.** Monta a resposta: o resumo de uma frase, as explicações de cada linha (com recuo para o que está dentro de blocos), os alertas, os conceitos usados e a explicação da decisão.
 
@@ -50,8 +51,9 @@ Para pergunta, o texto é comparado com as 160 frases de exemplo da base usando 
 
 | Mensagem | Perceptiva | Cognitiva | Decisória |
 |---|---|---|---|
-| `let total = 0;` (código) | JavaScript, só o leitor de JS conseguiu ler | 2 de 2 instruções reconhecidas | explicar |
-| `x = 5` | vale nas duas linguagens | 1 de 1 reconhecida | explicar avisando que escolheu Python |
+| `let total = 0;` com JavaScript escolhido | linguagem escolhida: JavaScript | 2 de 2 instruções reconhecidas | explicar |
+| `let total = 0;` com Python escolhido | o leitor de Python não lê, o de JavaScript lê | nenhuma | pedir para trocar o seletor e guardar o código |
+| `x = 5` | vale nas duas linguagens | 1 de 1 reconhecida | explicar na linguagem escolhida |
 | `api_key = "sk-proj-..."` | chave trocada por `***` | o analisador só vê `***` | explicar, com alerta |
 | "o que é uma lista?" | termo técnico "lista" | conceito lista, confiança 0,80 | explicar o conceito |
 | "não entendi o for" | termo técnico "for" | conceito for (o TF-IDF sozinho achava "agradecimento") | explicar o conceito |
@@ -65,7 +67,7 @@ O último exemplo é um erro que o bot comete: a pergunta não tem nada a ver co
 | Nível | No DecifraBot | Para quê |
 |---|---|---|
 | Curta | As últimas 6 mensagens. Código entra só como "[código Python com 7 linhas]" | Manter a conversa coerente sem duplicar o código |
-| Média | O último código (já com senhas escondidas), a linguagem dele e a explicação | Responder "explica a linha 4", "resume" e mostrar o exemplo do conceito na linguagem certa |
+| Média | A linguagem escolhida, o último código (já com senhas escondidas), a explicação e o código que está esperando a troca de linguagem | Responder "explica a linha 4", "resume", explicar o código depois da troca e mostrar o exemplo do conceito na linguagem escolhida |
 | Longa | **Não existe** | |
 
 Não ter memória longa foi uma decisão. O código de uma pessoa pode ter coisas do trabalho dela, nomes de arquivos, endereços internos. Guardar isso entre conversas criaria um risco sem nenhum ganho para quem só quer entender um trecho. Quando a pessoa fecha a página ou clica em "Limpar conversa", tudo some.

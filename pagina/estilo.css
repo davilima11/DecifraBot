@@ -124,6 +124,18 @@ button.secundario:hover, .exemplos button:hover { border-color: var(--destaque);
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 #form-chat { padding: 12px; border-top: 1px solid var(--borda); display: grid; gap: 8px; }
+
+/* seletor de linguagem: dois botões lado a lado, o escolhido em ultravioleta */
+.seletor { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.seletor legend { float: left; padding: 0; font-size: 0.8rem; color: var(--texto-suave); }
+.seletor .opcoes { display: inline-flex; border: 1px solid var(--borda); border-radius: 8px; padding: 2px; background: var(--codigo-fundo); }
+.seletor label { position: relative; cursor: pointer; }
+.seletor input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seletor span { display: block; padding: 5px 14px; border-radius: 6px; font-size: 0.86rem; color: var(--texto-suave); }
+.seletor label:hover span { color: var(--texto); }
+.seletor input:checked + span { background: var(--destaque); color: var(--destaque-texto); font-weight: 600; }
+.seletor input:focus-visible + span { outline: 2px solid var(--foco); outline-offset: 2px; }
+.seletor:disabled { opacity: 0.5; }
 /* o campo cresce junto com o texto (pelo script), então não precisa de barra de rolagem nem de alça */
 #campo {
   width: 100%; min-height: 76px; max-height: 45%; resize: none; overflow-y: auto; font-size: 0.9rem; padding: 9px 12px;

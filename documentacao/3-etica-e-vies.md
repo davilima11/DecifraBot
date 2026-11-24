@@ -99,7 +99,7 @@ O guia apresenta três pilares (Córdova, 2025).
 
 **Participação.** Até agora, só eu testei. Antes de usar de verdade, o bot precisaria ser testado por alunos iniciantes de verdade, que são o público e escrevem as perguntas de um jeito que eu não consigo prever. É a maior limitação do projeto.
 
-**Remediação.** A pessoa consegue corrigir o bot quando ele erra a linguagem ("é javascript"), perguntar de outro jeito quando ele não entende e ver por que ele respondeu o que respondeu. O que falta é um jeito de avisar "essa explicação está errada" para quem mantém o bot. Isso fica como próximo passo.
+**Remediação.** Quem escolhe a linguagem é a pessoa, no seletor, e se o código não bate com a escolha o bot avisa em vez de explicar errado. Ela também consegue perguntar de outro jeito quando ele não entende e ver por que ele respondeu o que respondeu. O que falta é um jeito de avisar "essa explicação está errada" para quem mantém o bot. Isso fica como próximo passo.
 
 ## 8. Limitações que conheço
 

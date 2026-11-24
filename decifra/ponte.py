@@ -13,7 +13,7 @@ _agente = Agente()
 
 def _para_json(resposta):
     saida = {chave: resposta.get(chave) for chave in
-             ("tipo", "texto", "avisos", "acao", "explicacao", "linguagem", "codigo_exibido")}
+             ("tipo", "texto", "avisos", "acao", "explicacao", "linguagem", "linguagem_escolhida", "codigo_exibido")}
     if resposta["tipo"] == "explicacao":
         resultado = resposta["resultado"]
         saida["linhas"] = [{"numero": l.numero, "texto": l.texto, "nivel": l.nivel} for l in resposta["linhas"]]
@@ -24,6 +24,16 @@ def _para_json(resposta):
 
 def responder(texto):
     return json.dumps(_para_json(_agente.responder(texto)), ensure_ascii=False)
+
+
+def escolher_linguagem(linguagem, explicar_pendente=True):
+    """Seletor de linguagem: devolve a explicação do código que estava esperando, ou "null"."""
+    resposta = _agente.escolher_linguagem(linguagem, explicar_pendente)
+    return json.dumps(_para_json(resposta) if resposta else None, ensure_ascii=False)
+
+
+def linguagem_escolhida():
+    return _agente.memoria.linguagem_escolhida
 
 
 def limpar():

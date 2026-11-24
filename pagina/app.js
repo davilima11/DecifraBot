@@ -166,11 +166,32 @@
     }
   }
 
+  // ---------- seletor de linguagem ----------
+  const seletor = $("#seletor");
+  const opcoes = [...seletor.querySelectorAll('input[name="linguagem"]')];
+
+  // a tela sempre mostra a linguagem que o agente tem guardada (o "é javascript" também troca)
+  function sincronizarSeletor(linguagem) {
+    for (const opcao of opcoes) opcao.checked = opcao.value === linguagem;
+    campo.placeholder = `Cole um código em ${linguagem} ou faça uma pergunta...`;
+  }
+
+  opcoes.forEach((opcao) => opcao.addEventListener("change", () => {
+    if (!opcao.checked || !ponte) return;
+    const resposta = JSON.parse(ponte.escolher_linguagem(opcao.value));
+    sincronizarSeletor(opcao.value);
+    if (resposta) {
+      mostrarDoBot(resposta);
+      rolarParaFim();
+    }
+  }));
+
   function enviar(texto) {
     if (!ponte || !texto.trim()) return;
     const resposta = JSON.parse(ponte.responder(texto));
     mostrarDoUsuario(texto, resposta);
     mostrarDoBot(resposta);
+    if (resposta.linguagem_escolhida) sincronizarSeletor(resposta.linguagem_escolhida);
     rolarParaFim();
   }
 
@@ -234,12 +255,19 @@
   function montarExemplos() {
     const lugar = $("#exemplos");
     const exemplos = JSON.parse(ponte.exemplos());
-    const itens = [...Object.entries(exemplos), ["o que é uma lista?", "o que é uma lista?"]];
-    for (const [titulo, conteudo] of itens) {
+    exemplos.push({ titulo: "o que é uma lista?", linguagem: null, codigo: "o que é uma lista?" });
+    for (const exemplo of exemplos) {
       const botao = document.createElement("button");
       botao.type = "button";
-      botao.textContent = titulo;
-      botao.addEventListener("click", () => enviar(conteudo));
+      botao.textContent = exemplo.titulo;
+      botao.addEventListener("click", () => {
+        // o exemplo troca a linguagem antes de mandar o código
+        if (exemplo.linguagem) {
+          ponte.escolher_linguagem(exemplo.linguagem, false);
+          sincronizarSeletor(exemplo.linguagem);
+        }
+        enviar(exemplo.codigo);
+      });
       lugar.append(botao);
     }
   }
@@ -251,7 +279,8 @@
       log.replaceChildren();
       mensagemSimples(ponte.mensagem_inicial());
       montarExemplos();
-      form.querySelectorAll("textarea, button").forEach((el) => (el.disabled = false));
+      form.querySelectorAll("textarea, button, fieldset").forEach((el) => (el.disabled = false));
+      sincronizarSeletor(ponte.linguagem_escolhida());
       $("#limpar").disabled = false;
     })
     .catch((erro) => {

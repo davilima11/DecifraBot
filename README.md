@@ -18,7 +18,7 @@ Projeto final da Unidade IV (Agentes e Ética) da disciplina Tendências em Ciê
 
 ## O que ele faz
 
-Explica código **Python** e **JavaScript** linha por linha, avisa quando o código faz algo que merece cuidado (apagar arquivos, mandar dados pela internet, montar SQL juntando texto, guardar senha no código) e responde perguntas sobre os conceitos que aparecem, como "o que é um for?". Depois de explicar, dá para pedir "explica a linha 4" ou "resume".
+Explica código **Python** e **JavaScript** linha por linha. A pessoa escolhe a linguagem num seletor acima do campo de texto (começa em Python). O bot avisa quando o código faz algo que merece cuidado (apagar arquivos, mandar dados pela internet, montar SQL juntando texto, guardar senha no código) e responde perguntas sobre os conceitos que aparecem, como "o que é um for?". Depois de explicar, dá para pedir "explica a linha 4" ou "resume".
 
 E o que ele **não** faz: não escreve nem corrige código, não executa o código e não guarda nada depois que a conversa acaba. Senhas e chaves que estiverem no código são escondidas antes de qualquer análise. Quando encontra algo que não sabe explicar, ele diz isso em vez de inventar.
 
@@ -64,7 +64,7 @@ index.html                    versão web (o mesmo código Python rodando no nav
 decifra/
   agente.py                   as 4 camadas do agente (perceber, entender, decidir, executar)
   memoria.py                  memória curta e média
-  linguagem.py                descobre se o código é Python, JavaScript ou outra linguagem
+  linguagem.py                percebe quando o código é de outra linguagem, para avisar
   privacidade.py              esconde senhas e chaves antes da análise
   tfidf.py                    TF-IDF feito à mão, para entender as perguntas
   textos.py                   frases de explicação compartilhadas entre as linguagens

@@ -79,8 +79,8 @@ def test_resumo(bot):
     assert resposta["acao"] == "resumir" and "Por cima" in resposta["texto"]
 
 
-def test_conceito_usa_exemplo_da_linguagem_da_conversa(bot):
-    bot.responder("let x = 5;\nconsole.log(x);")
+def test_conceito_usa_exemplo_da_linguagem_escolhida(bot):
+    bot.escolher_linguagem("JavaScript")
     resposta = bot.responder("o que é um for?")
     assert resposta["acao"] == "explicar_conceito" and "```javascript" in resposta["texto"]
 
@@ -105,13 +105,49 @@ def test_fora_do_escopo_admite_que_nao_entendeu(bot, frase):
     assert bot.responder(frase)["acao"] == "nao_entendi"
 
 
-def test_trocar_linguagem_vale_so_para_codigo_ambiguo(bot):
+# ---------- seletor de linguagem (Python ou JavaScript, sem modo automático) ----------
+def test_comeca_em_python(bot):
+    assert bot.memoria.linguagem_escolhida == "Python"
     assert bot.responder("x = 5")["linguagem"] == "Python"
-    assert bot.memoria.linguagem == "Python"
+
+
+def test_codigo_da_outra_linguagem_pede_para_trocar(bot):
+    resposta = bot.responder("let x = 5;\nconsole.log(x);")
+    assert resposta["acao"] == "linguagem_diferente" and "Troque para JavaScript" in resposta["texto"]
+    assert bot.memoria.codigo_pendente is not None
+
+
+def test_trocar_no_seletor_explica_o_codigo_pendente(bot):
+    bot.responder("let x = 5;\nconsole.log(x);")
+    resposta = bot.escolher_linguagem("JavaScript")
+    assert resposta["acao"] == "trocar_linguagem" and resposta["linguagem"] == "JavaScript"
+    assert resposta["linhas"] and bot.memoria.codigo_pendente is None
+
+
+def test_trocar_no_seletor_sem_codigo_pendente_nao_responde(bot):
+    assert bot.escolher_linguagem("JavaScript") is None
+    assert bot.memoria.linguagem_escolhida == "JavaScript"
+    with pytest.raises(ValueError):
+        bot.escolher_linguagem("Java")
+
+
+def test_exemplo_troca_a_linguagem_sem_explicar_o_pendente(bot):
+    bot.responder("let x = 5;\nconsole.log(x);")
+    assert bot.escolher_linguagem("Python", explicar_pendente=False) is None
+    assert bot.memoria.codigo_pendente is None
+
+
+def test_escrever_a_linguagem_tambem_troca(bot):
     bot.responder("é javascript")
-    assert bot.memoria.linguagem == "JavaScript"
-    assert bot.responder('def f():\n    print("oi")')["linguagem"] == "Python"
+    assert bot.memoria.linguagem_escolhida == "JavaScript"
     assert bot.responder("y = 10")["linguagem"] == "JavaScript"
+    assert bot.responder('def f():\n    print("oi")')["acao"] == "linguagem_diferente"
+
+
+def test_codigo_que_vale_nas_duas_e_lido_na_escolhida_sem_aviso(bot):
+    bot.escolher_linguagem("JavaScript")
+    resposta = bot.responder("x = 5")
+    assert resposta["linguagem"] == "JavaScript" and not any("cara de" in a for a in resposta["avisos"])
 
 
 @pytest.mark.parametrize("codigo, linguagem", [
