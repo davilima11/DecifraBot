@@ -12,6 +12,8 @@ Projeto final da Unidade IV (Agentes e Ética) da disciplina Tendências em Ciê
 | **Instituição** | UDF Centro Universitário |
 | **Ferramenta de IA usada como apoio** | Claude |
 
+**Versão online:** https://davilima11.github.io/DecifraBot/ (dá para usar e ler a documentação direto no navegador, sem instalar nada)
+
 ![Tela do DecifraBot](docs/img/tela.png)
 
 ## O que ele faz
@@ -27,6 +29,13 @@ Precisa de Python 3.10 ou mais novo.
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+```
+
+Para abrir a versão web no computador (a mesma do site):
+
+```bash
+python -m http.server
+# depois abra http://localhost:8000
 ```
 
 Para rodar os testes:
@@ -51,6 +60,7 @@ A documentação segue o fluxo de trabalho de chatbots do SERPRO, adaptado para 
 
 ```
 app.py                        interface em Streamlit
+index.html, web/              versão web: o mesmo código Python rodando no navegador (Pyodide)
 decifra/
   agente.py                   as 4 camadas do agente (perceber, entender, decidir, executar)
   memoria.py                  memória curta e média
@@ -68,7 +78,7 @@ docs/                         especificação, arquitetura, ética e testes
 
 ## Tecnologias
 
-Python, Streamlit, o módulo `ast` do próprio Python, a biblioteca `esprima` (para ler JavaScript) e pytest. Não usa API de IA nenhuma: o código da pessoa não sai do computador dela. O motivo dessa escolha está na arquitetura.
+Python, Streamlit, o módulo `ast` do próprio Python, a biblioteca `esprima` (para ler JavaScript) e pytest. A versão online usa o Pyodide, que roda Python dentro do navegador. Não usa API de IA nenhuma: o código da pessoa não sai do computador dela. O motivo dessa escolha está na arquitetura.
 
 ## Mais linguagens
 

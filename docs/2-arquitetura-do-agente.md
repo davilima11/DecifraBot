@@ -86,9 +86,17 @@ Tem também uma questão de coerência. A motivação do projeto é justamente g
 
 O guia cita Mello (2024) sobre equilibrar arquitetura rígida (controle e segurança) com flexibilidade. O DecifraBot fica do lado rígido nas explicações de código e mais flexível nas perguntas, onde o TF-IDF entende o jeito de cada um escrever. O custo é que ele não explica tudo: classes, `lambda`, `async` e callbacks mais complexos ficam com "ainda não sei explicar".
 
+## Versão web
+
+Para a professora e os colegas testarem sem instalar nada, o DecifraBot também roda no GitHub Pages. O Pages só hospeda arquivos estáticos e não roda Python, então usei o Pyodide, que é o Python compilado para rodar dentro do navegador. O site carrega exatamente os mesmos arquivos da pasta `decifra/`, sem nenhuma reescrita. Por isso, o que os testes conferem é o que roda no site.
+
+Isso também reforça a privacidade: no site, o código que a pessoa cola é analisado no próprio navegador dela e não vai para servidor nenhum. O GitHub só entrega os arquivos da página.
+
+A única peça nova é `decifra/ponte.py`, que transforma as respostas em JSON para a página mostrar. A página monta todo o texto que vem do código do usuário como texto puro, nunca como HTML, para que um código com `<script>` dentro de uma string não seja executado.
+
 ## Como adicionar uma linguagem
 
-As explicações ficam em `decifra/textos.py` e são usadas pelos dois analisadores. Por isso, o `for` do Python e o `for...of` do JavaScript geram exatamente a mesma frase, e um teste confere isso. Para uma linguagem nova, o trabalho é escrever o analisador (a parte que lê a linguagem e sabe o que é cada estrutura) e registrar ele em `ANALISADORES`, no `agente.py`. A maior parte do texto já existe.
+As explicações ficam em `decifra/textos.py` e são usadas pelos dois analisadores. Por isso, o `for` do Python e o `for...of` do JavaScript geram exatamente a mesma frase, e um teste confere isso. Para uma linguagem nova, o trabalho é escrever o analisador (a parte que lê a linguagem e sabe o que é cada estrutura) e registrar ele em `ANALISADORES`, no `agente.py`. A maior parte do texto já existe. Depois é só rodar `python web/manifesto.py` para o site carregar o arquivo novo (um teste avisa se isso for esquecido).
 
 ## Referências
 

@@ -13,12 +13,13 @@ O teste que compara o TF-IDF com o scikit-learn só roda se o scikit-learn estiv
 
 ## Testes automatizados
 
-São 49 testes, todos passando.
+São 52 testes, todos passando.
 
 | Arquivo | O que confere | Testes |
 |---|---|---|
 | `test_python.py` | Código de iniciante, função com `if`/`elif`/`else`, `range`, `while`, `try`, `with open`, list comprehension, alertas de segurança, SQL parametrizado sem alerta falso, estruturas que ele não sabe, erro de sintaxe | 9 |
 | `test_javascript.py` | O mesmo para JavaScript, mais `for` com contador, `else if`, arrow function, `map`, `filter`, `addEventListener`, e um teste que confere que Python e JavaScript usam exatamente a mesma frase para o laço | 8 |
+| `test_site.py` | A lista de arquivos que o site carrega está atualizada, a ponte devolve JSON que a página entende, e uma linha com crase é citada sem quebrar | 3 |
 | `test_agente.py` | Detecção de 8 linguagens e do código ambíguo, linguagens que ele não explica, senhas e chaves escondidas (e que não chegam na memória), conversa inteira (linha, resumo, conceito, troca de linguagem), recusas, perguntas fora do assunto e TF-IDF igual ao scikit-learn | 32 |
 
 ## Calibração das perguntas
@@ -61,6 +62,7 @@ O guia fala em tentar fazer o agente falhar de propósito.
 | `x = 5` (vale nas duas linguagens) | Explicou como Python e avisou que podia ser JavaScript |
 | Código Java, C, HTML ou SQL | Disse qual linguagem parecia e que ainda não explica essa |
 | Código com erro de digitação | Disse que não conseguiu ler e a linha provável do erro |
+| No site, código com `<img src=x onerror=...>` e `<script>` dentro de strings | Mostrou tudo como texto; nada foi executado (testado num navegador de verdade) |
 | JavaScript moderno com `?.` | Disse que não conseguiu ler, talvez por ser um recurso novo |
 | "explica a linha 50" num código de 7 linhas | Disse quantas linhas o código tem |
 | "qual a capital da frança", "asdkjh qwe" | Disse que não entendeu e explicou o que sabe fazer |
@@ -81,7 +83,7 @@ O DecifraBot ainda não foi homologado com usuários de verdade. Para colocar em
 
 1. Testar com alunos iniciantes, que são o público principal.
 2. Pedir para um professor ou monitor revisar as explicações dos conceitos.
-3. Publicar online. O Streamlit Community Cloud roda o app direto deste repositório; outra opção é o GitHub Pages, rodando o Python no navegador com o Pyodide.
+3. A publicação já existe: a versão web está no GitHub Pages, rodando o mesmo código Python no navegador. Testei ela num navegador de verdade (computador e celular, tema claro e escuro). No meu computador o Python carregou em cerca de 2 segundos; pela internet, a primeira visita demora mais, porque o navegador baixa uns 12 MB do Pyodide (depois fica guardado).
 
 ## Curadoria
 

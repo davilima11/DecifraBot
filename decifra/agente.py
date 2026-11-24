@@ -233,7 +233,9 @@ class Agente:
             return f"O código tem {total} {'linha' if total == 1 else 'linhas'}, então não existe a linha {numero}."
         texto_linha = linhas_fonte[numero - 1].strip()
         explicacoes = [l.texto for l in self.memoria.resultado.linhas if l.numero == numero]
-        mostra = f"**Linha {numero}:** `{texto_linha}`\n\n" if texto_linha else ""
+        # linha com crase (template string) precisa de crase dupla para não quebrar o Markdown
+        citacao = f"`` {texto_linha} ``" if "`" in texto_linha else f"`{texto_linha}`"
+        mostra = f"**Linha {numero}:** {citacao}\n\n" if texto_linha else ""
         if explicacoes:
             return mostra + "\n\n".join(e[0].upper() + e[1:] for e in explicacoes)
         if not texto_linha:
