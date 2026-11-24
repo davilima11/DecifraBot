@@ -88,3 +88,35 @@ Python, Streamlit, o módulo `ast` do próprio Python, a biblioteca `esprima` (p
 ## Mais linguagens
 
 Cada linguagem tem um analisador próprio, mas as frases de explicação ficam num arquivo só (`decifra/textos.py`) e são usadas pelas duas. Para ensinar Java ao DecifraBot, por exemplo, seria preciso um analisador novo que leia Java (a biblioteca `javalang` faz isso); o texto das explicações já está quase todo pronto.
+
+## Referências
+
+**Material da disciplina**
+
+- VALÉRIA, Kadidja. *Guia de Estudos A1: Criação de Agentes de IA e Ética Aplicada*. Tendências em Ciência da Computação. UDF Centro Universitário, 2026.
+- VALÉRIA, Kadidja. *Boas Práticas na Colaboração Humano-IA* (material da Unidade 2). Tendências em Ciência da Computação. UDF Centro Universitário, 2026.
+
+Os autores abaixo foram citados a partir do Guia de Estudos A1, e não lidos diretamente:
+
+- BARCAUI (2025), sobre viés algorítmico.
+- CÓRDOVA (2025), sobre frameworks éticos e licença social para operar.
+- LEE, GOLDBERG e KOHANE (2024), sobre privacidade desde o design.
+- MELLO (2024), sobre arquitetura de agentes e avaliação além da acurácia.
+- MURTA (2023), sobre interpretabilidade e confiança em agentes.
+
+**Desenvolvimento de chatbots e legislação**
+
+- SERPRO. *Desenvolvendo Chatbots: fluxo de trabalho*. Disponível em: https://serprobots.estaleiro.serpro.gov.br/docs/dev/
+- BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm
+
+**Ferramentas e bibliotecas usadas**
+
+- PYTHON SOFTWARE FOUNDATION. *ast — Abstract Syntax Trees*. Disponível em: https://docs.python.org/3/library/ast.html
+- esprima-python (leitura de código JavaScript). Disponível em: https://github.com/Kronuz/esprima-python
+- Pyodide (Python no navegador, usado na versão web). Disponível em: https://pyodide.org
+- Streamlit (interface da versão em Python). Disponível em: https://streamlit.io
+- marked (exibição da documentação no site). Disponível em: https://marked.js.org
+- scikit-learn (usado só no teste que confere o TF-IDF feito à mão). Disponível em: https://scikit-learn.org
+- pytest (testes automatizados). Disponível em: https://pytest.org
+
+**Ferramenta de IA usada como apoio:** Claude (Anthropic).
