@@ -47,14 +47,8 @@ code, pre, textarea { font-family: ui-monospace, "Cascadia Code", Consolas, "Lib
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
   gap: 12px 24px; padding-block: 24px 16px;
 }
-.marca { display: flex; align-items: center; gap: 12px; }
-.logo {
-  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px;
-  background: var(--destaque); color: var(--destaque-texto); font: 700 18px ui-monospace, Consolas, monospace;
-}
 .marca h1 { margin: 0; font-size: 1.5rem; line-height: 1.1; }
 .marca p { margin: 2px 0 0; color: var(--texto-suave); font-size: 0.9rem; }
-.credito { margin: 0; color: var(--texto-suave); font-size: 0.85rem; }
 
 .abas { display: flex; gap: 4px; border-bottom: 1px solid var(--borda); overflow-x: auto; }
 [role="tab"] {
