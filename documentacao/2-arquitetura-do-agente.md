@@ -96,7 +96,7 @@ A única peça nova é `decifra/ponte.py`, que transforma as respostas em JSON p
 
 ## Como adicionar uma linguagem
 
-As explicações ficam em `decifra/textos.py` e são usadas pelos dois analisadores. Por isso, o `for` do Python e o `for...of` do JavaScript geram exatamente a mesma frase, e um teste confere isso. Para uma linguagem nova, o trabalho é escrever o analisador (a parte que lê a linguagem e sabe o que é cada estrutura) e registrar ele em `ANALISADORES`, no `agente.py`. A maior parte do texto já existe. Depois é só rodar `python web/manifesto.py` para o site carregar o arquivo novo (um teste avisa se isso for esquecido).
+As explicações ficam em `decifra/textos.py` e são usadas pelos dois analisadores. Por isso, o `for` do Python e o `for...of` do JavaScript geram exatamente a mesma frase, e um teste confere isso. Para uma linguagem nova, o trabalho é escrever o analisador (a parte que lê a linguagem e sabe o que é cada estrutura) e registrar ele em `ANALISADORES`, no `agente.py`. A maior parte do texto já existe. Depois é só rodar `python pagina/manifesto.py` para o site carregar o arquivo novo (um teste avisa se isso for esquecido).
 
 ## Referências
 

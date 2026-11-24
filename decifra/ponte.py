@@ -35,5 +35,5 @@ def mensagem_inicial():
 
 
 def exemplos():
-    caminho = Path(__file__).resolve().parent.parent / "data" / "exemplos.json"
+    caminho = Path(__file__).resolve().parent.parent / "dados" / "exemplos.json"
     return caminho.read_text(encoding="utf-8")

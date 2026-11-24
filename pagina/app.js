@@ -182,9 +182,18 @@
     evento.preventDefault();
     const texto = campo.value;
     campo.value = "";
+    ajustarAltura();
     enviar(texto);
     campo.focus();
   });
+
+  // o campo cresce conforme o texto (até quase metade do chat), em vez de mostrar barra de rolagem
+  function ajustarAltura() {
+    campo.style.height = "auto";
+    const limite = document.querySelector(".chat").clientHeight * 0.45;
+    campo.style.height = Math.min(campo.scrollHeight + 2, limite) + "px";
+  }
+  campo.addEventListener("input", ajustarAltura);
 
   campo.addEventListener("keydown", (evento) => {
     if (evento.key === "Enter" && !evento.shiftKey && !evento.isComposing) {
@@ -208,17 +217,17 @@
   }
 
   async function iniciarPython() {
-    const pyodide = await loadPyodide({ indexURL: new URL("web/vendor/pyodide/", location.href).href });
-    const arquivos = JSON.parse(await baixarTexto("web/arquivos.json"));
+    const pyodide = await loadPyodide({ indexURL: new URL("pagina/bibliotecas/pyodide/", location.href).href });
+    const arquivos = JSON.parse(await baixarTexto("pagina/arquivos.json"));
     const conteudos = await Promise.all(arquivos.map(async (caminho) => [caminho, await baixarTexto(caminho)]));
     for (const [caminho, texto] of conteudos) {
-      const destino = caminho.startsWith("web/vendor/")
-        ? "/home/pyodide/vendor/" + caminho.slice("web/vendor/".length)
+      const destino = caminho.startsWith("pagina/bibliotecas/")
+        ? "/home/pyodide/bibliotecas/" + caminho.slice("pagina/bibliotecas/".length)
         : "/home/pyodide/app/" + caminho;
       pyodide.FS.mkdirTree(destino.slice(0, destino.lastIndexOf("/")));
       pyodide.FS.writeFile(destino, texto);
     }
-    pyodide.runPython('import sys\nsys.path.insert(0, "/home/pyodide/app")\nsys.path.insert(0, "/home/pyodide/vendor")');
+    pyodide.runPython('import sys\nsys.path.insert(0, "/home/pyodide/app")\nsys.path.insert(0, "/home/pyodide/bibliotecas")');
     return pyodide.pyimport("decifra.ponte");
   }
 
@@ -284,7 +293,7 @@
       else link.removeAttribute("aria-current");
     });
     try {
-      const texto = await baixarTexto(`docs/${id}.md`);
+      const texto = await baixarTexto(`documentacao/${id}.md`);
       if (docAtual !== id) return; // a pessoa já clicou em outro documento
       visor.innerHTML = markdownDosDocs.parse(texto);
     } catch (erro) {

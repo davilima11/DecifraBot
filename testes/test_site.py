@@ -3,14 +3,14 @@ import json
 from pathlib import Path
 
 from decifra import ponte
-from web.manifesto import listar
+from pagina.manifesto import listar
 
 RAIZ = Path(__file__).resolve().parent.parent
 
 
 def test_lista_de_arquivos_do_site_esta_atualizada():
-    # se alguém criar um arquivo novo em decifra/ e esquecer de rodar web/manifesto.py, o site quebra
-    salvo = json.loads((RAIZ / "web" / "arquivos.json").read_text(encoding="utf-8"))
+    # se alguém criar um arquivo novo em decifra/ e esquecer de rodar pagina/manifesto.py, o site quebra
+    salvo = json.loads((RAIZ / "pagina" / "arquivos.json").read_text(encoding="utf-8"))
     assert salvo == listar()
     assert all((RAIZ / arquivo).exists() for arquivo in salvo)
 

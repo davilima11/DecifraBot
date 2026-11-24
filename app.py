@@ -8,7 +8,7 @@ import streamlit as st
 from decifra.agente import Agente
 
 st.set_page_config(page_title="DecifraBot")
-EXEMPLOS = json.loads((Path(__file__).parent / "data" / "exemplos.json").read_text(encoding="utf-8"))
+EXEMPLOS = json.loads((Path(__file__).parent / "dados" / "exemplos.json").read_text(encoding="utf-8"))
 CODIGO_ENTRE_CRASES = re.compile(r"(``.+?``|`[^`]+`)")
 
 

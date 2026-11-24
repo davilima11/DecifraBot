@@ -58,7 +58,7 @@ O que o DecifraBot sabe está em três lugares:
 |---|---|
 | `decifra/textos.py` | 39 frases de explicação e 11 tipos de alerta, usados pelas duas linguagens |
 | `decifra/analisadores/` | As regras que reconhecem cada estrutura de Python e de JavaScript |
-| `data/conhecimento.json` | 19 conceitos (com explicação, exemplo nas duas linguagens e 115 jeitos de perguntar) e 6 intenções de conversa |
+| `dados/conhecimento.json` | 19 conceitos (com explicação, exemplo nas duas linguagens e 115 jeitos de perguntar) e 6 intenções de conversa |
 
 Escrevi as explicações dos conceitos pensando em como eu teria gostado que me explicassem quando comecei.
 

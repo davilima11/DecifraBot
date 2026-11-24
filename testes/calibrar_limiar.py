@@ -1,6 +1,6 @@
 """Testa as perguntas com frases que NÃO estão na base, para escolher o limiar de confiança.
 
-Uso: python -m tests.calibrar_limiar
+Uso: python -m testes.calibrar_limiar
 """
 from decifra.agente import Agente
 

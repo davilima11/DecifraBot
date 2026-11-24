@@ -14,7 +14,7 @@ Projeto final da Unidade IV (Agentes e Ética) da disciplina Tendências em Ciê
 
 **Versão online:** https://davilima11.github.io/DecifraBot/ (dá para usar e ler a documentação direto no navegador, sem instalar nada)
 
-![Tela do DecifraBot](docs/img/tela.png)
+![Tela do DecifraBot](documentacao/imagens/tela.png)
 
 ## O que ele faz
 
@@ -42,17 +42,17 @@ Para rodar os testes:
 
 ```bash
 python -m pytest
-python -m tests.calibrar_limiar   # mostra como escolhi o limiar de confiança
+python -m testes.calibrar_limiar   # mostra como escolhi o limiar de confiança
 ```
 
 ## Onde está cada entrega
 
 | Entrega da Unidade IV | Onde está |
 |---|---|
-| Criação de agente de IA | [docs/2-arquitetura-do-agente.md](docs/2-arquitetura-do-agente.md) e a pasta `decifra/` |
-| Chatbot com a especificação | [docs/1-especificacao.md](docs/1-especificacao.md) e `app.py` |
-| Viés algorítmico e responsabilidade social | [docs/3-etica-e-vies.md](docs/3-etica-e-vies.md) |
-| Projeto final (solução aplicada) | este repositório, com os testes em [docs/4-testes.md](docs/4-testes.md) |
+| Criação de agente de IA | [documentacao/2-arquitetura-do-agente.md](documentacao/2-arquitetura-do-agente.md) e a pasta `decifra/` |
+| Chatbot com a especificação | [documentacao/1-especificacao.md](documentacao/1-especificacao.md) e `app.py` |
+| Viés algorítmico e responsabilidade social | [documentacao/3-etica-e-vies.md](documentacao/3-etica-e-vies.md) |
+| Projeto final (solução aplicada) | este repositório, com os testes em [documentacao/4-testes.md](documentacao/4-testes.md) |
 
 A documentação segue o fluxo de trabalho de chatbots do SERPRO, adaptado para o tamanho de um projeto de disciplina.
 
@@ -60,7 +60,7 @@ A documentação segue o fluxo de trabalho de chatbots do SERPRO, adaptado para 
 
 ```
 app.py                        interface em Streamlit
-index.html, web/              versão web: o mesmo código Python rodando no navegador (Pyodide)
+index.html                    versão web (o mesmo código Python rodando no navegador)
 decifra/
   agente.py                   as 4 camadas do agente (perceber, entender, decidir, executar)
   memoria.py                  memória curta e média
@@ -68,12 +68,17 @@ decifra/
   privacidade.py              esconde senhas e chaves antes da análise
   tfidf.py                    TF-IDF feito à mão, para entender as perguntas
   textos.py                   frases de explicação compartilhadas entre as linguagens
+  ponte.py                    liga o código Python à versão web
   analisadores/python.py      lê Python com o módulo ast
   analisadores/javascript.py  lê JavaScript com a biblioteca esprima
-data/conhecimento.json        conceitos, perguntas e respostas
-data/exemplos.json            códigos de exemplo da tela
-tests/                        testes com pytest e script de calibração
-docs/                         especificação, arquitetura, ética e testes
+dados/
+  conhecimento.json           conceitos, perguntas e respostas
+  exemplos.json               códigos de exemplo da tela
+pagina/                       estilo e script da versão web
+  bibliotecas/                Pyodide, esprima e marked (cópias, para o site não depender de outro servidor)
+testes/                       testes com pytest e script de calibração
+documentacao/                 especificação, arquitetura, ética e testes
+  imagens/                    print da tela
 ```
 
 ## Tecnologias

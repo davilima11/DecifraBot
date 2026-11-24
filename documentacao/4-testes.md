@@ -6,7 +6,7 @@ Esta parte cobre as etapas finais do fluxo do SERPRO (testar, homologar, implant
 
 ```bash
 python -m pytest                  # testes automatizados
-python -m tests.calibrar_limiar   # tabela do limiar de confiança
+python -m testes.calibrar_limiar   # tabela do limiar de confiança
 ```
 
 O teste que compara o TF-IDF com o scikit-learn só roda se o scikit-learn estiver instalado. Sem ele, esse teste é pulado e os outros rodam normalmente.

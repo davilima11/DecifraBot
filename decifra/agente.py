@@ -17,10 +17,10 @@ from decifra.memoria import Memoria
 from decifra.privacidade import dado_sensivel_no_texto, mascarar_codigo
 from decifra.tfidf import TfIdf
 
-BASE_PADRAO = Path(__file__).resolve().parent.parent / "data" / "conhecimento.json"
+BASE_PADRAO = Path(__file__).resolve().parent.parent / "dados" / "conhecimento.json"
 ANALISADORES = {"Python": python.analisar, "JavaScript": javascript.analisar}
 
-# limiares de confiança para perguntas (escolhidos testando, ver docs/4-testes.md)
+# limiares de confiança para perguntas (escolhidos testando, ver documentacao/4-testes.md)
 LIMIAR_ALTO = 0.55
 LIMIAR_BAIXO = 0.40
 # a partir daqui a explicação fica comprida demais para ler numa conversa
