@@ -94,24 +94,22 @@ Cada linguagem tem um analisador próprio, mas as frases de explicação ficam n
 **Material da disciplina**
 
 - VALÉRIA, Kadidja. *Guia de Estudos A1: Criação de Agentes de IA e Ética Aplicada*. Tendências em Ciência da Computação. UDF Centro Universitário, 2026.
-- VALÉRIA, Kadidja. *Boas Práticas na Colaboração Humano-IA* (material da Unidade 2). Tendências em Ciência da Computação. UDF Centro Universitário, 2026.
-
-Os autores abaixo foram citados a partir do Guia de Estudos A1, e não lidos diretamente:
-
-- BARCAUI (2025), sobre viés algorítmico.
-- CÓRDOVA (2025), sobre frameworks éticos e licença social para operar.
-- LEE, GOLDBERG e KOHANE (2024), sobre privacidade desde o design.
-- MELLO (2024), sobre arquitetura de agentes e avaliação além da acurácia.
-- MURTA (2023), sobre interpretabilidade e confiança em agentes.
 
 **Desenvolvimento de chatbots e legislação**
 
 - SERPRO. *Desenvolvendo Chatbots: fluxo de trabalho*. Disponível em: https://serprobots.estaleiro.serpro.gov.br/docs/dev/
 - BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm
 
+**Tutoriais e guias**
+
+- PYTHON SOFTWARE FOUNDATION. *ast — Árvores de Sintaxe Abstrata*. Documentação oficial do Python em português. Disponível em: https://docs.python.org/pt-br/3.9/library/ast.html
+- FREECODECAMP. *Como processar dados textuais usando o TF-IDF em Python*. Disponível em: https://www.freecodecamp.org/portuguese/news/como-processar-dados-textuais-usando-o-tf-idf-em-python/
+- STREAMLIT. *Build a basic LLM chat app* (tutorial oficial para montar um chat). Disponível em: https://docs.streamlit.io/develop/tutorials/chat-and-llm-apps/build-conversational-apps
+- PYODIDE. *Getting started* (guia de início). Disponível em: https://pyodide.readthedocs.io/en/stable/usage/quickstart.html
+- TESTDRIVEN.IO. *Running Python in the Browser with WebAssembly*. Disponível em: https://testdriven.io/blog/python-webassembly/
+
 **Ferramentas e bibliotecas usadas**
 
-- PYTHON SOFTWARE FOUNDATION. *ast — Abstract Syntax Trees*. Disponível em: https://docs.python.org/3/library/ast.html
 - esprima-python (leitura de código JavaScript). Disponível em: https://github.com/Kronuz/esprima-python
 - Pyodide (Python no navegador, usado na versão web). Disponível em: https://pyodide.org
 - Streamlit (interface da versão em Python). Disponível em: https://streamlit.io
